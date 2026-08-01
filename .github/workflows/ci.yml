@@ -1,4 +1,49 @@
-name: Monorepo Pipeline Verification
+# .github/workflows/verify-workspace.yml
+name: Verify Workspace
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Verify required files exist
+        run: |
+          REQUIRED_FILES=("README.md" "LICENSE.md" "SECURITY.md" "GOVERNANCE.md")
+          for f in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "::error file=$f::Missing required file $f"
+              exit 1
+            fi
+          done
+
+      - name: Verify hash integrity
+        run: |
+          if ! sha256sum -c MANIFEST.sha256; then
+            echo "::error::Hash mismatch in MANIFEST.sha256"
+            exit 1
+          fi
+
+      - name: Verify DAO seals
+        run: |
+          if ! grep -q "MintProofDAO-436351437" MANIFEST.md; then
+            echo "::error::MintProofDAO seal missing"
+            exit 1
+          fi
+          if ! grep -q "LedgerProofDAO-430" MANIFEST.md; then
+            echo "::error::LedgerProofDAO seal missing"
+            exit 1
+          fi
+
+      - name: Success
+        run: echo "Workspace verification passed ✅"name: Monorepo Pipeline Verification
 on:
   push:
     branches: [ main ]
