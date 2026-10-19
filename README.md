@@ -6,7 +6,7 @@ A type-safe, optimized web application framework built on an agile bundler pipel
 [![Engine Node](https://shields.io)](https://nodejs.org)
 [![License: MIT](https://shields.io)](https://opensource.org)
 
----
+-#Main:locked--
 
 ## ⚙️ System Requirements & Engine Rules
 
